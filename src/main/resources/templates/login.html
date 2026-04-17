@@ -10,19 +10,20 @@
 
 <body>
 <header>
-<img src='../public/images/img.png' id="billede">
+<img src= "/images/img.png" id="billede">
 
 </header>
 <form class="loginside" method="post">
 
         <h1>Velkommen</h1>
 
-        <input type="text" name="username" placeholder="Indtast brugernavn"/>
-        <input type="password" name="password" placeholder="Indtast adgangskode"/>
-        <button onclick=login() type="submit" id="loginknap" formaction="/login"> Log ind </button>
+        <input type="text" id="username" name="username" placeholder="Indtast brugernavn"/>
+        <input type="password" id="password" name="password" placeholder="Indtast adgangskode"/>
+        <button onclick=login() type="button" id="loginknap" formaction="/login"> Log ind </button>
 
-        <a href="/signup.html">Opret konto</a>
+        <a href="/signup">Opret konto</a>
 
 </form>
+<script src="/javascript/main.js"></script>
 </body>
 </html>

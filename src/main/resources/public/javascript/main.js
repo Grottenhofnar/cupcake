@@ -12,14 +12,13 @@ async function login(){
     });
 
     if(response.ok){
-        window.location = "/index.html";
+        window.location = "/index";
     }
     else{
         alert("Forkert login");
     }
 
 }
-
 
 async function createUser() {
 
@@ -36,7 +35,7 @@ async function createUser() {
 
     if (response.ok) {
         alert("Bruger oprettet");
-        window.location = "/login.html";
+        window.location = "/login";
     } else {
         alert("Bruger findes allerede");
     }
@@ -51,13 +50,13 @@ async function loadUser() {
     }
 }
 function goToCreate(){
-    window.location = "/signup.html";
+    window.location = "/signup";
 }
 
 function goToLogin(){
-    window.location = "/login.html";
+    window.location = "/login";
 }
 async function logout() {
     await fetch("/logout");
-    window.location = "/login.html";
+    window.location = "/login";
 }

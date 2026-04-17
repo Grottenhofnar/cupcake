@@ -18,8 +18,8 @@ public class Main {
             config.fileRenderer(new JavalinThymeleaf());
         }).start(7000);
 
-        app.get("/login", ctx -> ctx.render("login.html"));
-        app.get("/signup", ctx -> ctx.render("signup.html"));
+        app.get("/login", ctx -> ctx.render("templates/login.html"));
+        app.get("/signup", ctx -> ctx.render("templates/signup.html"));
         app.post("/login", ctx -> handleLogin(ctx));
         app.post("/signup", ctx -> handleSignup(ctx));
         app.get("/logout", ctx -> handleLogout(ctx));
