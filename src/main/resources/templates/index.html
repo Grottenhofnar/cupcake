@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../public/css/startside.css">
+    <title>Olsker Cupcakes</title>
+</head>
+<body>
+<header>
+    <nav>
+        <div class="pages">
+            <a href="#1">Orders</a>
+            <a href="#2">Customers</a>
+        </div>
+        <div class="mail-cart">
+            <div>
+                <a href="#">mail@gmail.com</a>
+            </div>
+            <a href="#shop"><img src="../public/images/shopping-cart.svg" alt="" id="shopping-cart"></a>
+        </div>
+    </nav>
+</header>
+
+<main>
+
+    <div class="main">
+        <img src="../public/images/logo.svg" alt="" id="logo">
+        <div class="cc-maker">
+            <h1>Cupcake Maker</h1>
+            <div class="choices">
+                <form action="" id="cupcake-form"> <!-- Vend tilbage -->
+                    <label for="bottoms">Choose bottom:</label>
+                    <select id="bottoms" name="bottoms">
+                        <option value="chocolate">Chocolate</option>
+                        <option value="vanilla">Vanilla</option>
+                        <option value="nutmeg">Nutmeg</option>
+                        <option value="pistacio">Pistacio</option>
+                        <option value="almond">Almond</option>
+                    </select>
+                    <label for="toppings">Choose topping:</label>
+                    <select id="toppings" name="toppings">
+                        <option value="chocolate">Chocolate</option>
+                        <option value="blueberry">Blueberry</option>
+                        <option value="raspberry">Raspberry</option>
+                        <option value="crispy">Crispy</option>
+                        <option value="strawberry">Strawberry</option>
+                        <option value="rum-raisin">Rum/Raisin</option>
+                        <option value="orange">Orange</option>
+                        <option value="lemon">Lemon</option>
+                        <option value="blue-cheese">Blue Cheese</option>
+                    </select>
+                    <label for="amount">Choose amount:</label>
+                    <input type="number" id="amount">
+                    <button type="submit">Add to cart</button>
+                </form>
+            </div>
+        </div>
+        <div class="container">
+            <div class="image-cycle">
+                <figure>
+                    <img src="../public/images/vanilla-top.svg" alt="">
+                    <img src="../public/images/pink-top.svg" alt="">
+                    <img src="../public/images/choco-top.svg" alt="">
+                    <img src="../public/images/smarties-top.svg" alt="">
+                    <img src="../public/images/strawberry-top.svg" alt="">
+                    <img src="../public/images/vanilla-top.svg" alt="">
+                </figure>
+            </div>
+            <div class="allergies">
+                <h2>Allergen information:</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Beatae itaque provident repudiandae. Amet architecto autem dignissimos dolores ducimus esse ex, fuga, id ipsam iste nihil possimus qui quibusdam similique, voluptatibus.</p>
+            </div>
+        </div>
+    </div>
+</main>
+</body>
+</html>
