@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../public/css/startside.css">
+    <link href="../../public/css/startside.css" th:href="@{/css/startside.css}" rel="stylesheet"/>
     <title>Olsker Cupcakes</title>
 </head>
 <body>
@@ -29,7 +29,7 @@
         <div class="cc-maker">
             <h1>Cupcake Maker</h1>
             <div class="choices">
-                <form action="" id="cupcake-form"> <!-- Vend tilbage -->
+                <form action="" id="cupcake-form">
                     <label for="bottoms">Choose bottom:</label>
                     <select id="bottoms" name="bottoms">
                         <option value="chocolate">Chocolate</option>
@@ -59,12 +59,12 @@
         <div class="container">
             <div class="image-cycle">
                 <figure>
-                    <img src="../public/images/vanilla-top.svg" alt="">
-                    <img src="../public/images/pink-top.svg" alt="">
-                    <img src="../public/images/choco-top.svg" alt="">
-                    <img src="../public/images/smarties-top.svg" alt="">
-                    <img src="../public/images/strawberry-top.svg" alt="">
-                    <img src="../public/images/vanilla-top.svg" alt="">
+                    <img src="/images/vanilla-top.svg" alt="">
+                    <img src="/images/pink-top.svg" alt="">
+                    <img src="/images/choco-top.svg" alt="">
+                    <img src="/images/smarties-top.svg" alt="">
+                    <img src="/images/strawberry-top.svg" alt="">
+                    <img src="/images/vanilla-top.svg" alt="">
                 </figure>
             </div>
             <div class="allergies">

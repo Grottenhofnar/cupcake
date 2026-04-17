@@ -20,6 +20,7 @@ public class Main {
 
         app.get("/login", ctx -> ctx.render("templates/login.html"));
         app.get("/signup", ctx -> ctx.render("templates/signup.html"));
+        app.get("/index", ctx -> ctx.render("templates/index.html"));
         app.post("/login", ctx -> handleLogin(ctx));
         app.post("/signup", ctx -> handleSignup(ctx));
         app.get("/logout", ctx -> handleLogout(ctx));
