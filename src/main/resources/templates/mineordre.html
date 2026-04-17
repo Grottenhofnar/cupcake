@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Start</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="../../public/css/ordre.css" th:href="@{/css/ordre.css}" rel="stylesheet"/>
+
+</head>
+
+<body>
+<header>
+<nav>
+    <a href="/"> Startside </a>
+
+    <span th:text="${ indsæt email?? }"></span>
+
+    <a href="" id="href_for_kurv">
+        <img src="../public/images/kurv.png" id="kurv"/>
+    </a>
+</nav>
+</header>
+
+
+
+
+<form class="ordre">
+    <img src="../public/images/logo1.png" id="logo1">
+
+    <h1>Mine ordre</h1>
+
+    <div id="table">
+    <table >
+        <tr>
+            <th>Bottom</th>
+            <th>Top</th>
+            <th>Antal</th>
+        </tr>
+        <tr>
+            <td>    bottom     </td>
+            <td>     top   </td>
+            <td>     antal   </td>
+        </tr>
+        <tr>
+            <td>    </td>
+            <td>     </td>
+            <td>    </td>
+        </tr>
+    </table>
+    </div>
+</form>
+</body>
+</html>
