@@ -1,9 +1,8 @@
 import io.javalin.Javalin;
-import java.util.ArrayList;
-import java.util.List;
 import io.javalin.http.staticfiles.Location;
 import org.mindrot.jbcrypt.BCrypt;
 import persistence.ConnectionPool;
+import io.javalin.rendering.template.JavalinThymeleaf;
 
 public class Main {
 
@@ -15,11 +14,16 @@ public class Main {
                 staticFiles.directory = "/public";
                 staticFiles.location = Location.CLASSPATH;
             });
+
+            config.fileRenderer(new JavalinThymeleaf());
         }).start(7000);
 
+        app.get("/login", ctx -> ctx.render("login.html"));
+        app.get("/signup", ctx -> ctx.render("signup.html"));
         app.post("/login", ctx -> handleLogin(ctx));
         app.post("/signup", ctx -> handleSignup(ctx));
         app.get("/logout", ctx -> handleLogout(ctx));
+
 
         app.get("/me", ctx -> {
             String username = ctx.sessionAttribute("user");
@@ -47,7 +51,7 @@ public class Main {
         }
 
         if (user == null) {
-            ctx.redirect("/login.html");
+            ctx.redirect("/login");
         }
     }
 
@@ -59,7 +63,7 @@ public class Main {
             try (var conn = ConnectionPool.getConnection()) {
 
                 var stmt = conn.prepareStatement(
-                        "SELECT password FROM users WHERE username = ?"
+                        "SELECT password FROM customers WHERE username = ?"
                 );
 
                 stmt.setString(1, loginUser.username);
@@ -107,7 +111,7 @@ public class Main {
             try (var conn = ConnectionPool.getConnection()) {
 
                 var checkStmt = conn.prepareStatement(
-                        "SELECT 1 FROM users WHERE username = ?"
+                        "SELECT 1 FROM customers WHERE username = ?"
                 );
                 checkStmt.setString(1, newUser.username);
 
@@ -122,7 +126,7 @@ public class Main {
 
 
                 var insertStmt = conn.prepareStatement(
-                        "INSERT INTO users (username, password) VALUES (?, ?)"
+                        "INSERT INTO customers (username, password) VALUES (?, ?)"
                 );
 
                 insertStmt.setString(1, newUser.username);
@@ -146,8 +150,8 @@ public class Main {
 
     private static void handleLogout(io.javalin.http.Context ctx) {
         ctx.req().getSession().invalidate();
-        ctx.redirect("/login.html");
+        ctx.redirect("/login");
     }
 }
 
-}
+
