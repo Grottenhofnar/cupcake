@@ -41,6 +41,8 @@ async function createUser() {
     }
 }
 
+let cart = [];
+
 async function loadOptions() {
     const [toppingRes, bottomRes] = await Promise.all([
         fetch("/toppings"),
@@ -56,6 +58,8 @@ async function loadOptions() {
     toppings.forEach(t => {
         const option = document.createElement("option");
         option.value = t.id;
+        option.dataset.name = t.name;
+        option.dataset.price = t.price;
         option.text = `${t.name} (${t.price} kr)`;
         toppingSelect.appendChild(option);
     });
@@ -63,30 +67,103 @@ async function loadOptions() {
     bottoms.forEach(b => {
         const option = document.createElement("option");
         option.value = b.id;
+        option.dataset.name = b.name;
+        option.dataset.price = b.price;
         option.text = `${b.name} (${b.price} kr)`;
         bottomSelect.appendChild(option);
     });
 }
 
-async function placeOrder() {
-    const toppingId = document.getElementById("toppings").value;
-    const bottomId = document.getElementById("bottoms").value;
-    const quantity = document.getElementById("amount").value;
+function addToCart() {
+    const toppingSelect = document.getElementById("toppings");
+    const bottomSelect = document.getElementById("bottoms");
+    const quantity = parseInt(document.getElementById("amount").value);
 
-    const response = await fetch("/order", {
+    if (!quantity || quantity < 1) {
+        alert("Please enter a valid amount");
+        return;
+    }
+
+    const toppingId = parseInt(toppingSelect.value);
+    const bottomId = parseInt(bottomSelect.value);
+    const toppingName = toppingSelect.selectedOptions[0].dataset.name;
+    const bottomName = bottomSelect.selectedOptions[0].dataset.name;
+    const toppingPrice = parseFloat(toppingSelect.selectedOptions[0].dataset.price);
+    const bottomPrice = parseFloat(bottomSelect.selectedOptions[0].dataset.price);
+    const lineTotal = (toppingPrice + bottomPrice) * quantity;
+
+    cart.push({ toppingId, bottomId, toppingName, bottomName, toppingPrice, bottomPrice, quantity, lineTotal });
+
+    renderCart();
+    updateCartIcon();
+}
+
+function removeFromCart(index) {
+    cart.splice(index, 1);
+    renderCart();
+    updateCartIcon();
+}
+
+function updateCartIcon() {
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById("cart-count").textContent = totalItems;
+}
+
+function renderCart() {
+    const cartItems = document.getElementById("cart-items");
+    const cartTotal = document.getElementById("cart-total");
+    cartItems.innerHTML = "";
+
+    if (cart.length === 0) {
+        cartItems.innerHTML = "<p>Your cart is empty.</p>";
+        cartTotal.textContent = "0.00";
+        return;
+    }
+
+    let total = 0;
+    cart.forEach((item, index) => {
+        total += item.lineTotal;
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.innerHTML = `
+            <span>${item.quantity}x ${item.bottomName} bottom + ${item.toppingName} topping</span>
+            <span>${item.lineTotal.toFixed(2)} kr</span>
+            <button onclick="removeFromCart(${index})">✕</button>
+        `;
+        cartItems.appendChild(div);
+    });
+
+    cartTotal.textContent = total.toFixed(2);
+}
+
+function toggleCart() {
+    const sidebar = document.getElementById("cart-sidebar");
+    sidebar.classList.toggle("open");
+}
+
+async function checkout() {
+    if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+    }
+
+    const response = await fetch("/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ toppingId: parseInt(toppingId), bottomId: parseInt(bottomId), quantity: parseInt(quantity) })
+        body: JSON.stringify({ items: cart })
     });
 
     if (response.ok) {
-        alert("Order placed!");
+        alert("Order placed successfully!");
+        cart = [];
+        renderCart();
+        updateCartIcon();
     } else {
-        alert("Something went wrong");
+        const msg = await response.text();
+        alert(msg);
     }
 }
 
-// Load options when page loads
 loadOptions();
 
 async function loadUser() {
