@@ -23,36 +23,22 @@
 </header>
 
 <main>
-
     <div class="main">
         <img src="/images/logo.svg" alt="" id="logo">
         <div class="cc-maker">
             <h1>Cupcake Maker</h1>
             <div class="choices">
-                <form action="" id="cupcake-form">
+                <form id="cupcake-form">
                     <label for="bottoms">Choose bottom:</label>
-                    <select id="bottoms" name="bottoms">
-                        <option value="chocolate">Chocolate</option>
-                        <option value="vanilla">Vanilla</option>
-                        <option value="nutmeg">Nutmeg</option>
-                        <option value="pistacio">Pistacio</option>
-                        <option value="almond">Almond</option>
-                    </select>
+                    <select id="bottoms" name="bottoms"></select>
+
                     <label for="toppings">Choose topping:</label>
-                    <select id="toppings" name="toppings">
-                        <option value="chocolate">Chocolate</option>
-                        <option value="blueberry">Blueberry</option>
-                        <option value="raspberry">Raspberry</option>
-                        <option value="crispy">Crispy</option>
-                        <option value="strawberry">Strawberry</option>
-                        <option value="rum-raisin">Rum/Raisin</option>
-                        <option value="orange">Orange</option>
-                        <option value="lemon">Lemon</option>
-                        <option value="blue-cheese">Blue Cheese</option>
-                    </select>
+                    <select id="toppings" name="toppings"></select>
+
                     <label for="amount">Choose amount:</label>
-                    <input type="number" id="amount">
-                    <button type="submit">Add to cart</button>
+                    <input type="number" id="amount" min="1" value="1">
+
+                    <button type="button" onclick="placeOrder()">Add to cart</button>
                 </form>
             </div>
         </div>
@@ -74,5 +60,7 @@
         </div>
     </div>
 </main>
+
+<script src="/javascript/main.js"></script>
 </body>
 </html>
