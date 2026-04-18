@@ -88,6 +88,28 @@ label {
     font-weight: bold;
 }
 
+#logoutbutton {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 18px;
+    width:  110%;
+    height: 100%;
+}
+
+#logoutbutton:hover {
+        background: #c0392b;
+}
+
+#nav-username {
+    color: white;
+    font-size: 16px;
+
+}
+
 select, input {
     width: 300px;
     height: 60px;

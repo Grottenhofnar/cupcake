@@ -56,6 +56,50 @@ public class Main {
             ctx.render("templates/admin.html", Map.of("username", username));
         });
 
+        app.put("/admin/customers/{customerId}/balance", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            int customerId = Integer.parseInt(ctx.pathParam("customerId"));
+            var body = ctx.bodyAsClass(BalanceRequest.class);
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var stmt = conn.prepareStatement(
+                        "UPDATE Customers SET Balance = ? WHERE CustomerID = ?"
+                );
+                stmt.setDouble(1, body.balance);
+                stmt.setInt(2, customerId);
+                stmt.executeUpdate();
+                ctx.result("Balance updated");
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
+        app.delete("/admin/customers/{customerId}", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            int customerId = Integer.parseInt(ctx.pathParam("customerId"));
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var stmt = conn.prepareStatement("DELETE FROM Customers WHERE CustomerID = ?");
+                stmt.setInt(1, customerId);
+                stmt.executeUpdate();
+                ctx.result("Customer deleted");
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
         app.get("/admin/orders", ctx -> {
             String role = ctx.sessionAttribute("role");
             if (role == null || !role.equals("admin")) {

@@ -60,7 +60,7 @@ function closeModal() {
 }
 
 async function deleteOrder(orderId, event) {
-    event.stopPropagation(); // prevent row click firing
+    event.stopPropagation();
     if (!confirm(`Are you sure you want to delete order #${orderId}?`)) return;
 
     const res = await fetch(`/admin/orders/${orderId}`, { method: "DELETE" });
@@ -83,14 +83,66 @@ async function loadCustomers() {
     customers.forEach(customer => {
         const row = document.createElement("tr");
         row.innerHTML = `
-            <td>${customer.customerId}</td>
-            <td>${customer.username}</td>
-            <td>${customer.balance.toFixed(2)} kr</td>
-            <td>${customer.role}</td>
-        `;
+        <td>${customer.customerId}</td>
+        <td>${customer.username}</td>
+        <td>${customer.balance.toFixed(2)} kr</td>
+        <td>${customer.role}</td>
+        <td>
+            <button onclick="openBalanceModal(${customer.customerId}, '${customer.username}', ${customer.balance})">Edit Balance</button>
+            <button onclick="deleteCustomer(${customer.customerId}, '${customer.username}')">🗑 Delete</button>
+        </td>
+    `;
         tbody.appendChild(row);
     });
 }
+
+async function deleteCustomer(customerId, username) {
+    if (!confirm(`Are you sure you want to delete customer "${username}"? This will also delete all their orders.`)) return;
+
+    const res = await fetch(`/admin/customers/${customerId}`, { method: "DELETE" });
+
+    if (res.ok) {
+        alert(`Customer "${username}" deleted`);
+        loadCustomers();
+    } else {
+        alert("Failed to delete customer");
+    }
+}
+function openBalanceModal(customerId, username, currentBalance) {
+    document.getElementById("balance-modal-title").textContent = `Edit balance for ${username}`;
+    document.getElementById("balance-input").value = currentBalance;
+    document.getElementById("balance-modal").dataset.customerId = customerId;
+    document.getElementById("balance-modal").style.display = "flex";
+}
+
+function closeBalanceModal() {
+    document.getElementById("balance-modal").style.display = "none";
+}
+
+async function saveBalance() {
+    const modal = document.getElementById("balance-modal");
+    const customerId = modal.dataset.customerId;
+    const newBalance = parseFloat(document.getElementById("balance-input").value);
+
+    if (isNaN(newBalance) || newBalance < 0) {
+        alert("Please enter a valid balance");
+        return;
+    }
+
+    const res = await fetch(`/admin/customers/${customerId}/balance`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ balance: newBalance })
+    });
+
+    if (res.ok) {
+        closeBalanceModal();
+        loadCustomers();
+    } else {
+        alert("Failed to update balance");
+    }
+}
+
 
 function showSection(section) {
     document.getElementById("orders-section").style.display = section === "orders" ? "block" : "none";
@@ -117,7 +169,6 @@ async function loadUser() {
     }
 }
 
-// Call it on page load
 loadUser();
 
 loadOrders();
