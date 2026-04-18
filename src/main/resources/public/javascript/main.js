@@ -82,6 +82,23 @@ async function loadOptions() {
     });
 }
 
+async function saveCart() {
+    await fetch("/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: cart })
+    });
+}
+
+async function loadCart() {
+    const res = await fetch("/cart");
+    if (res.ok) {
+        cart = await res.json();
+        renderCart();
+        updateCartIcon();
+    }
+}
+
 function addToCart() {
     const toppingSelect = document.getElementById("toppings");
     const bottomSelect = document.getElementById("bottoms");
@@ -104,12 +121,14 @@ function addToCart() {
 
     renderCart();
     updateCartIcon();
+    saveCart();
 }
 
 function removeFromCart(index) {
     cart.splice(index, 1);
     renderCart();
     updateCartIcon();
+    saveCart();
 }
 
 function updateCartIcon() {
@@ -167,14 +186,12 @@ async function checkout() {
         renderCart();
         updateCartIcon();
         loadUser();
+        await fetch("/cart", { method: "DELETE"});
     } else {
         const msg = await response.text();
         alert(msg);
     }
 }
-
-loadOptions();
-
 async function loadUser() {
     const res = await fetch("/me");
 
@@ -198,4 +215,12 @@ async function logout() {
     window.location = "/login";
 }
 
-loadUser();
+
+if (document.getElementById("toppings")) {
+    loadOptions();
+    loadCart();
+}
+
+if (document.getElementById("nav-username")) {
+    loadUser();
+}

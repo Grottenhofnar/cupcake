@@ -1,3 +1,5 @@
+package model;
+
 public class UserResponse {
     public String username;
 
