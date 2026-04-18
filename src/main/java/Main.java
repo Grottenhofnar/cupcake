@@ -22,6 +22,8 @@ public class Main {
             config.fileRenderer(new JavalinThymeleaf());
         }).start(7000);
 
+        app.before(ctx -> checkSession(ctx));
+
         app.get("/login", ctx -> ctx.render("templates/login.html"));
         app.get("/signup", ctx -> ctx.render("templates/signup.html"));
 
@@ -43,7 +45,18 @@ public class Main {
                 return;
             }
 
-            ctx.json(new UserResponse(username));
+            try (var conn = ConnectionPool.getConnection()) {
+                var stmt = conn.prepareStatement("SELECT Balance FROM Customers WHERE Username = ?");
+                stmt.setString(1, username);
+                var rs = stmt.executeQuery();
+                if (rs.next()) {
+                    double balance = rs.getDouble("Balance");
+                    ctx.json(Map.of("username", username, "balance", balance));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
         });
 
         app.get("/admin", ctx -> {
@@ -323,7 +336,6 @@ public class Main {
         if (path.equals("/login.html") || path.equals("/signup.html") ||
                 path.equals("/login") || path.equals("/signup") ||
                 path.equals("/me") ||
-                path.startsWith("/notes") ||
                 path.endsWith(".js") || path.endsWith(".css") ||
                 path.endsWith(".png") || path.endsWith(".jpg")) {
             return;
@@ -351,8 +363,8 @@ public class Main {
 
                     if (BCrypt.checkpw(loginUser.password, hashedPassword)) {
                         ctx.sessionAttribute("user", loginUser.username);
-                        ctx.sessionAttribute("role", role);             // 👈 store role
-                        ctx.json(Map.of("role", role));                 // 👈 send role to JS
+                        ctx.sessionAttribute("role", role);
+                        ctx.json(Map.of("role", role));
                     } else {
                         ctx.status(401).result("Forkert login");
                     }

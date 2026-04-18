@@ -166,6 +166,7 @@ async function checkout() {
         cart = [];
         renderCart();
         updateCartIcon();
+        loadUser();
     } else {
         const msg = await response.text();
         alert(msg);
@@ -180,7 +181,7 @@ async function loadUser() {
     if (res.ok) {
         const data = await res.json();
         const el = document.getElementById("nav-username");
-        if (el) el.innerText = data.username;
+        if (el) el.innerText = `${data.username} | ${data.balance.toFixed(2)} kr`;
     } else {
         window.location = "/login";
     }
