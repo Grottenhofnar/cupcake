@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="header">
+    <nav>
+        <div class="pages">
+            <a href="/index">Home</a>
+        </div>
+        <div class="mail-cart">
+            <span>Welcome, <strong th:text="${username}"></strong></span>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </nav>
+</header>
+
+</body>
+</html>

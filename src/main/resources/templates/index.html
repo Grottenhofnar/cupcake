@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +17,8 @@
         </div>
         <div class="mail-cart">
             <div>
-                <a href="#">mail@gmail.com</a>
+                <span>Velkommen, <strong id="nav-username"></strong></span>
+                <button onclick="logout()">Logout</button>
             </div>
             <div id="cart-icon" onclick="toggleCart()">
                 <img src="/images/shopping-cart.svg" alt="" id="shopping-cart">

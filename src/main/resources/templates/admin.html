@@ -1,19 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link th:href="@{/css/startside.css}" rel="stylesheet"/>
-    <title>Admin Panel</title>
+    <link href="../../public/css/admin.css" th:href="@{/css/admin.css}" rel="stylesheet"/>
+    <title>Admin Table</title>
 </head>
 <body>
+
 <header>
     <nav>
         <div class="pages">
             <a href="#" onclick="showSection('orders')">Orders</a>
             <a href="#" onclick="showSection('customers')">Customers</a>
         </div>
-        <div class="mail-cart">
+        <div class="mail-cart" >
+            <span>Welcome, <strong id="nav-username"></strong></span>
             <button onclick="logout()">Logout</button>
         </div>
     </nav>
@@ -29,6 +31,7 @@
                 <th>Customer</th>
                 <th>Date</th>
                 <th>Total</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody id="orders-body"></tbody>
@@ -50,6 +53,17 @@
         </table>
     </div>
 </main>
+
+<!-- Order Detail Modal -->
+<div id="order-modal">
+    <div id="modal-content">
+        <div id="modal-header">
+            <h2 id="modal-title"></h2>
+            <button onclick="closeModal()">✕</button>
+        </div>
+        <div id="modal-body"></div>
+    </div>
+</div>
 
 <script src="/javascript/admin.js"></script>
 </body>

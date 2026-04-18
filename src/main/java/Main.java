@@ -24,7 +24,12 @@ public class Main {
 
         app.get("/login", ctx -> ctx.render("templates/login.html"));
         app.get("/signup", ctx -> ctx.render("templates/signup.html"));
-        app.get("/index", ctx -> ctx.render("templates/index.html"));
+
+        app.get("/index", ctx -> {
+            String username = ctx.sessionAttribute("user");
+            ctx.render("templates/index.html", Map.of("username", username));
+        });
+
         app.post("/login", ctx -> handleLogin(ctx));
         app.post("/signup", ctx -> handleSignup(ctx));
         app.get("/logout", ctx -> handleLogout(ctx));
@@ -44,10 +49,11 @@ public class Main {
         app.get("/admin", ctx -> {
             String role = ctx.sessionAttribute("role");
             if (role == null || !role.equals("admin")) {
-                ctx.status(403).redirect("/index");
+                ctx.redirect("/login");
                 return;
             }
-            ctx.render("templates/admin.html");
+            String username = ctx.sessionAttribute("user");
+            ctx.render("templates/admin.html", Map.of("username", username));
         });
 
         app.get("/admin/orders", ctx -> {
@@ -106,6 +112,65 @@ public class Main {
                     ));
                 }
                 ctx.json(customers);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
+        app.get("/admin/orders/{orderId}", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            int orderId = Integer.parseInt(ctx.pathParam("orderId"));
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var stmt = conn.prepareStatement("""
+            SELECT ol.Quantity,
+                   t.ToppingName, ol.ToppingPrice,
+                   b.BottomName, ol.BottomPrice
+            FROM Orderlines ol
+            JOIN Toppings t ON ol.ToppingID = t.ToppingID
+            JOIN Bottoms b ON ol.BottomID = b.BottomID
+            WHERE ol.OrderID = ?
+        """);
+                stmt.setInt(1, orderId);
+                var rs = stmt.executeQuery();
+
+                List<Map<String, Object>> lines = new ArrayList<>();
+                while (rs.next()) {
+                    lines.add(Map.of(
+                            "quantity", rs.getInt("Quantity"),
+                            "toppingName", rs.getString("ToppingName"),
+                            "toppingPrice", rs.getDouble("ToppingPrice"),
+                            "bottomName", rs.getString("BottomName"),
+                            "bottomPrice", rs.getDouble("BottomPrice")
+                    ));
+                }
+                ctx.json(lines);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
+        app.delete("/admin/orders/{orderId}", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            int orderId = Integer.parseInt(ctx.pathParam("orderId"));
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var stmt = conn.prepareStatement("DELETE FROM Orders WHERE OrderID = ?");
+                stmt.setInt(1, orderId);
+                stmt.executeUpdate();
+                ctx.result("Order deleted");
             } catch (Exception e) {
                 e.printStackTrace();
                 ctx.status(500).result("Server error");

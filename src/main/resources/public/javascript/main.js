@@ -179,7 +179,10 @@ async function loadUser() {
 
     if (res.ok) {
         const data = await res.json();
-        document.getElementById("login-name").innerText = data.username;
+        const el = document.getElementById("nav-username");
+        if (el) el.innerText = data.username;
+    } else {
+        window.location = "/login";
     }
 }
 function goToCreate(){
@@ -193,3 +196,5 @@ async function logout() {
     await fetch("/logout");
     window.location = "/login";
 }
+
+loadUser();
