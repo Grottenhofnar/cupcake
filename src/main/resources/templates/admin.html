@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link th:href="@{/css/startside.css}" rel="stylesheet"/>
+    <title>Admin Panel</title>
+</head>
+<body>
+<header>
+    <nav>
+        <div class="pages">
+            <a href="#" onclick="showSection('orders')">Orders</a>
+            <a href="#" onclick="showSection('customers')">Customers</a>
+        </div>
+        <div class="mail-cart">
+            <button onclick="logout()">Logout</button>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <div id="orders-section">
+        <h1>All Orders</h1>
+        <table id="orders-table">
+            <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+            </tr>
+            </thead>
+            <tbody id="orders-body"></tbody>
+        </table>
+    </div>
+
+    <div id="customers-section" style="display:none;">
+        <h1>All Customers</h1>
+        <table id="customers-table">
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Balance</th>
+                <th>Role</th>
+            </tr>
+            </thead>
+            <tbody id="customers-body"></tbody>
+        </table>
+    </div>
+</main>
+
+<script src="/javascript/admin.js"></script>
+</body>
+</html>

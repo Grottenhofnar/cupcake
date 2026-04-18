@@ -41,6 +41,77 @@ public class Main {
             ctx.json(new UserResponse(username));
         });
 
+        app.get("/admin", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).redirect("/index");
+                return;
+            }
+            ctx.render("templates/admin.html");
+        });
+
+        app.get("/admin/orders", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var rs = conn.prepareStatement("""
+            SELECT o.OrderID, c.Username, o.OrderDate,
+                   SUM((ol.ToppingPrice + ol.BottomPrice) * ol.Quantity) AS Total
+            FROM Orders o
+            JOIN Customers c ON o.CustomerID = c.CustomerID
+            JOIN Orderlines ol ON o.OrderID = ol.OrderID
+            GROUP BY o.OrderID, c.Username, o.OrderDate
+            ORDER BY o.OrderDate DESC
+        """).executeQuery();
+
+                List<Map<String, Object>> orders = new ArrayList<>();
+                while (rs.next()) {
+                    orders.add(Map.of(
+                            "orderId", rs.getInt("OrderID"),
+                            "username", rs.getString("Username"),
+                            "orderDate", rs.getString("OrderDate"),
+                            "total", rs.getDouble("Total")
+                    ));
+                }
+                ctx.json(orders);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
+        app.get("/admin/customers", ctx -> {
+            String role = ctx.sessionAttribute("role");
+            if (role == null || !role.equals("admin")) {
+                ctx.status(403).result("Forbidden");
+                return;
+            }
+
+            try (var conn = ConnectionPool.getConnection()) {
+                var rs = conn.prepareStatement(
+                        "SELECT CustomerID, Username, Balance, Role FROM Customers"
+                ).executeQuery();
+
+                List<Map<String, Object>> customers = new ArrayList<>();
+                while (rs.next()) {
+                    customers.add(Map.of(
+                            "customerId", rs.getInt("CustomerID"),
+                            "username", rs.getString("Username"),
+                            "balance", rs.getDouble("Balance"),
+                            "role", rs.getString("Role")
+                    ));
+                }
+                ctx.json(customers);
+            } catch (Exception e) {
+                e.printStackTrace();
+                ctx.status(500).result("Server error");
+            }
+        });
+
         app.get("/toppings", ctx -> {
             List<Map<String, Object>> toppings = new ArrayList<>();
             try (var conn = ConnectionPool.getConnection()) {
@@ -155,38 +226,31 @@ public class Main {
     }
 
     private static void handleLogin(io.javalin.http.Context ctx) {
-
         try {
             User loginUser = ctx.bodyAsClass(User.class);
 
             try (var conn = ConnectionPool.getConnection()) {
-
                 var stmt = conn.prepareStatement(
-                        "SELECT password FROM customers WHERE username = ?"
+                        "SELECT password, role FROM Customers WHERE username = ?"
                 );
-
                 stmt.setString(1, loginUser.username);
-
                 var rs = stmt.executeQuery();
 
                 if (rs.next()) {
                     String hashedPassword = rs.getString("password");
+                    String role = rs.getString("role");
 
-                    if (org.mindrot.jbcrypt.BCrypt.checkpw(loginUser.password, hashedPassword)) {
+                    if (BCrypt.checkpw(loginUser.password, hashedPassword)) {
                         ctx.sessionAttribute("user", loginUser.username);
-                        ctx.result("Login success");
+                        ctx.sessionAttribute("role", role);             // 👈 store role
+                        ctx.json(Map.of("role", role));                 // 👈 send role to JS
                     } else {
                         ctx.status(401).result("Forkert login");
                     }
                 } else {
                     ctx.status(401).result("Forkert login");
                 }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-                ctx.status(500).result("Server error");
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             ctx.status(400).result("Invalid request");
@@ -251,11 +315,11 @@ public class Main {
         ctx.req().getSession().invalidate();
         ctx.redirect("/login");
     }
-    public class CheckoutRequest {
+    public static class CheckoutRequest {
         public List<CartItem> items;
     }
 
-    public class CartItem {
+    public static class CartItem {
         public int toppingId;
         public int bottomId;
         public String toppingName;
