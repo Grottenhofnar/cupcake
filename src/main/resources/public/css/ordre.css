@@ -63,6 +63,11 @@ th {
     color: white;
     padding: 15px;
     text-align: left;
+
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    border-top: 1px solid black;
 }
 
 td {
@@ -75,7 +80,76 @@ td {
 
 }
 
-#table{
 
-    padding-left: 20px;
+#cupcakes{
+    display: none;
+}
+
+@media (max-width: 800px) {
+
+    #logo1 {
+
+        position: fixed;
+        top: 5px;
+        left: 10px;
+        height: 60px;
+
+    }
+
+    #kurv {
+        display: none;
+
+    }
+
+    #startside {
+        color: white;
+        font-size: 20px;
+        text-decoration: overline;
+        position: fixed;
+        right: 20px;
+        top: 25px;
+
+    }
+
+    nav {
+
+        background-color: #3C1460;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 20px;
+        padding-bottom: 60px;
+
+    }
+
+    h1{
+        font-family: "Times New Roman", sans-serif;
+        font-size: 35px;
+        font-style: italic;
+        color: #3c1460;
+        text-align: center;
+        position: relative;
+        padding-left: 0px;
+
+    }
+    table {
+        width: 80%;
+        margin-left: auto;
+        margin-right: auto;
+        border-collapse: collapse;
+        font-family: Arial, sans-serif;
+    }
+    body{
+        margin: 0px;
+    }
+
+    #cupcakes{
+        display: block;
+        position: fixed;
+        height: 100px;
+        width: 350px;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 }
