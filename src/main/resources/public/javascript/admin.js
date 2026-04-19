@@ -170,5 +170,4 @@ async function loadUser() {
 }
 
 loadUser();
-
 loadOrders();
